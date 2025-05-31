@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, AlertTriangle, Search } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Asteroid } from '@/types/asteroid';
 import { useToast } from '@/hooks/use-toast';
 
@@ -18,6 +19,8 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
   const [asteroids, setAsteroids] = useState<Asteroid[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const { toast } = useToast();
 
   const fetchAsteroids = async () => {
@@ -76,6 +79,7 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
   const handleAsteroidSelect = (asteroidId: string) => {
     const asteroid = asteroids.find(a => a.id === asteroidId);
     onAsteroidSelect(asteroid || null);
+    setOpen(false);
   };
 
   const getAsteroidSize = (asteroid: Asteroid) => {
@@ -85,6 +89,34 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
     ) / 2;
     return avgDiameter.toFixed(1);
   };
+
+  const getClosestApproachDistance = (asteroid: Asteroid) => {
+    if (!asteroid.close_approach_data || asteroid.close_approach_data.length === 0) {
+      return 'Unknown';
+    }
+    
+    // Get the closest approach (smallest miss distance)
+    const closestApproach = asteroid.close_approach_data.reduce((closest, current) => {
+      const closestDistance = parseFloat(closest.miss_distance.kilometers);
+      const currentDistance = parseFloat(current.miss_distance.kilometers);
+      return currentDistance < closestDistance ? current : closest;
+    });
+    
+    const distanceKm = parseFloat(closestApproach.miss_distance.kilometers);
+    
+    // Format distance for readability
+    if (distanceKm > 1000000) {
+      return `${(distanceKm / 1000000).toFixed(1)}M km`;
+    } else if (distanceKm > 1000) {
+      return `${(distanceKm / 1000).toFixed(0)}K km`;
+    } else {
+      return `${distanceKm.toFixed(0)} km`;
+    }
+  };
+
+  const filteredAsteroids = asteroids.filter(asteroid =>
+    asteroid.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -118,30 +150,56 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
 
       {asteroids.length > 0 && (
         <div className="space-y-4">
-          <Select onValueChange={handleAsteroidSelect}>
-            <SelectTrigger className="w-full bg-slate-700 border-slate-600 text-white">
-              <SelectValue placeholder="Choose an asteroid to analyze..." />
-            </SelectTrigger>
-            <SelectContent className="bg-slate-700 border-slate-600">
-              {asteroids.map((asteroid) => (
-                <SelectItem 
-                  key={asteroid.id} 
-                  value={asteroid.id}
-                  className="text-white hover:bg-slate-600"
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <span className="font-medium">{asteroid.name}</span>
-                    <div className="flex items-center space-x-2 text-sm text-slate-300">
-                      <span>~{getAsteroidSize(asteroid)}km</span>
-                      {asteroid.is_potentially_hazardous_asteroid && (
-                        <AlertTriangle className="w-4 h-4 text-red-400" />
-                      )}
-                    </div>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className="w-full justify-between bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+              >
+                {selectedAsteroid
+                  ? selectedAsteroid.name
+                  : "Choose an asteroid to analyze..."}
+                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0 bg-slate-700 border-slate-600" align="start">
+              <Command className="bg-slate-700">
+                <CommandInput 
+                  placeholder="Search asteroids..." 
+                  value={searchValue}
+                  onValueChange={setSearchValue}
+                  className="text-white"
+                />
+                <CommandList className="max-h-[300px]">
+                  <CommandEmpty className="text-slate-300">No asteroid found.</CommandEmpty>
+                  <CommandGroup>
+                    {filteredAsteroids.map((asteroid) => (
+                      <CommandItem
+                        key={asteroid.id}
+                        value={asteroid.id}
+                        onSelect={() => handleAsteroidSelect(asteroid.id)}
+                        className="text-white hover:bg-slate-600 cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex flex-col">
+                            <span className="font-medium">{asteroid.name}</span>
+                            <span className="text-xs text-slate-400">
+                              {getAsteroidSize(asteroid)}km diameter • {getClosestApproachDistance(asteroid)} from Earth
+                            </span>
+                          </div>
+                          {asteroid.is_potentially_hazardous_asteroid && (
+                            <AlertTriangle className="w-4 h-4 text-red-400 ml-2" />
+                          )}
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
 
           {selectedAsteroid && (
             <div className="bg-slate-700/50 rounded-lg p-4 space-y-3">
@@ -152,15 +210,13 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
                   <p className="text-white font-medium">{getAsteroidSize(selectedAsteroid)}km</p>
                 </div>
                 <div>
+                  <p className="text-slate-400">Closest Distance</p>
+                  <p className="text-white font-medium">{getClosestApproachDistance(selectedAsteroid)}</p>
+                </div>
+                <div>
                   <p className="text-slate-400">Hazardous</p>
                   <p className={`font-medium ${selectedAsteroid.is_potentially_hazardous_asteroid ? 'text-red-400' : 'text-green-400'}`}>
                     {selectedAsteroid.is_potentially_hazardous_asteroid ? 'Yes' : 'No'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-slate-400">Orbit Class</p>
-                  <p className="text-white font-medium">
-                    {selectedAsteroid.orbital_data?.orbit_class?.orbit_class_type || 'Unknown'}
                   </p>
                 </div>
                 <div>
