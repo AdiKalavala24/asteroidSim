@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -158,7 +159,9 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
                 </div>
                 <div>
                   <p className="text-slate-400">Orbit Class</p>
-                  <p className="text-white font-medium">{selectedAsteroid.orbital_data.orbit_class.orbit_class_type}</p>
+                  <p className="text-white font-medium">
+                    {selectedAsteroid.orbital_data?.orbit_class?.orbit_class_type || 'Unknown'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-slate-400">Approaches</p>
