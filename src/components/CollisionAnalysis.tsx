@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -33,7 +32,7 @@ export const CollisionAnalysis: React.FC<CollisionAnalysisProps> = ({
     const closestApproach = asteroid.close_approach_data[0];
     const missDistance = parseFloat(closestApproach.miss_distance.kilometers);
     const velocity = parseFloat(closestApproach.relative_velocity.kilometers_per_second);
-    const diameter = (asteroid.diameter.estimated_diameter_min + asteroid.diameter.estimated_diameter_max) / 2;
+    const diameter = (asteroid.estimated_diameter.kilometers.estimated_diameter_min + asteroid.estimated_diameter.kilometers.estimated_diameter_max) / 2;
     
     // Earth's radius is ~6,371 km
     const earthRadius = 6371;

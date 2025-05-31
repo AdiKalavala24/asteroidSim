@@ -2,9 +2,23 @@
 export interface Asteroid {
   id: string;
   name: string;
-  diameter: {
-    estimated_diameter_min: number;
-    estimated_diameter_max: number;
+  estimated_diameter: {
+    kilometers: {
+      estimated_diameter_min: number;
+      estimated_diameter_max: number;
+    };
+    meters: {
+      estimated_diameter_min: number;
+      estimated_diameter_max: number;
+    };
+    miles: {
+      estimated_diameter_min: number;
+      estimated_diameter_max: number;
+    };
+    feet: {
+      estimated_diameter_min: number;
+      estimated_diameter_max: number;
+    };
   };
   close_approach_data: {
     epoch_date_close_approach: number;

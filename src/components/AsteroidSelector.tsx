@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -80,8 +79,8 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
 
   const getAsteroidSize = (asteroid: Asteroid) => {
     const avgDiameter = (
-      asteroid.diameter.estimated_diameter_min + 
-      asteroid.diameter.estimated_diameter_max
+      asteroid.estimated_diameter.kilometers.estimated_diameter_min + 
+      asteroid.estimated_diameter.kilometers.estimated_diameter_max
     ) / 2;
     return avgDiameter.toFixed(1);
   };
@@ -132,7 +131,7 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
                   <div className="flex items-center justify-between w-full">
                     <span className="font-medium">{asteroid.name}</span>
                     <div className="flex items-center space-x-2 text-sm text-slate-300">
-                      <span>~{getAsteroidSize(asteroid)}m</span>
+                      <span>~{getAsteroidSize(asteroid)}km</span>
                       {asteroid.is_potentially_hazardous_asteroid && (
                         <AlertTriangle className="w-4 h-4 text-red-400" />
                       )}
@@ -149,7 +148,7 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
                   <p className="text-slate-400">Diameter</p>
-                  <p className="text-white font-medium">{getAsteroidSize(selectedAsteroid)}m</p>
+                  <p className="text-white font-medium">{getAsteroidSize(selectedAsteroid)}km</p>
                 </div>
                 <div>
                   <p className="text-slate-400">Hazardous</p>
