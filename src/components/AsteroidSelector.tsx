@@ -36,7 +36,7 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
       const formatDate = (date: Date) => date.toISOString().split('T')[0];
       
       const response = await fetch(
-        `https://api.nasa.gov/neo/rest/v1/feed?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&api_key=DEMO_KEY`
+        `https://api.nasa.gov/neo/rest/v1/feed?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&api_key=HIDDEN`
       );
       
       if (!response.ok) {
