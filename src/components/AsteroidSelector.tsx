@@ -48,7 +48,6 @@ const apiKey = 'DEMO_KEY';
 const response = await fetch(
   `https://api.nasa.gov/neo/rest/v1/feed?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&api_key=${apiKey}`
 );
-
       
       if (!response.ok) {
         throw new Error('Failed to fetch asteroid data');
