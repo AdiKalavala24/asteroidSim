@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, AlertTriangle, Search } from 'lucide-react';
@@ -6,6 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Asteroid } from '@/types/asteroid';
 import { useToast } from '@/hooks/use-toast';
+
 
 interface AsteroidSelectorProps {
   onAsteroidSelect: (asteroid: Asteroid | null) => void;
@@ -35,9 +35,20 @@ export const AsteroidSelector: React.FC<AsteroidSelectorProps> = ({
       
       const formatDate = (date: Date) => date.toISOString().split('T')[0];
       
-      const response = await fetch(
-        `https://api.nasa.gov/neo/rest/v1/feed?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&api_key=DEMO_KEY`
-      );
+//
+// PUT API KEY
+// PUT API KEY
+// PUT API KEY
+// PUT API KEY
+// PUT API KEY 
+// 
+
+const apiKey = 'DEMO_KEY';
+
+const response = await fetch(
+  `https://api.nasa.gov/neo/rest/v1/feed?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}&api_key=${apiKey}`
+);
+
       
       if (!response.ok) {
         throw new Error('Failed to fetch asteroid data');

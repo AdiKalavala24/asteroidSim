@@ -73,7 +73,7 @@ export const ImpactSimulation: React.FC<ImpactSimulationProps> = ({
             {/* Earth representation */}
             <div className="absolute inset-4 bg-gradient-to-br from-green-600 via-blue-500 to-blue-700 rounded-full shadow-2xl">
               {/* Continents simplified */}
-              <div className="absolute top-8 left-12 w-16 h-12 bg-green-700 rounded-lg opacity-80"></div>
+              <div className="absolute top-8 left-0 w-16 h-12 bg-green-700 rounded-lg opacity-80"></div>
               <div className="absolute top-16 right-16 w-12 h-8 bg-green-700 rounded-lg opacity-80"></div>
               <div className="absolute bottom-12 left-8 w-20 h-10 bg-green-700 rounded-lg opacity-80"></div>
               

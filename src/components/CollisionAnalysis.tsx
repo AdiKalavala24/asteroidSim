@@ -70,7 +70,7 @@ export const CollisionAnalysis: React.FC<CollisionAnalysisProps> = ({
       probability: Math.min(probability, 0.95), // Cap at 95%
       timeToImpact: willCollide ? Date.now() + (Math.random() * 365 * 24 * 60 * 60 * 1000) : undefined,
       impactVelocity: velocity,
-      kineticEnergy: kineticEnergy,
+      kineticEnergy: kineticEnergy*1000000,
       tsunamiRisk,
       craterSize
     };
